@@ -1,0 +1,25 @@
+{
+  "index": {
+    "title": "Introduction",
+    "display": "hidden",
+    "theme": {
+      "breadcrumb": false,
+      "footer": true,
+      "sidebar": false,
+      "toc": false,
+      "pagination": false,
+      "timestamp": false,
+      "layout": "full"
+    }
+  },
+  "docs": {
+    "title": "Docs",
+    "type": "page"
+  },
+  "contact": {
+    "title": "Contact ↗",
+    "type": "page",
+    "href": "https://twitter.com/KevinEdry",
+    "newWindow": true
+  }
+}

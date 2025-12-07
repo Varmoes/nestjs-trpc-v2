@@ -1,135 +1,245 @@
-# Turborepo starter
+<a href="https://nestjs-trpc.io/" target="_blank" rel="noopener">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://i.imgur.com/JvsOXCg.png" />
+    <img alt="tRPC" src="https://i.imgur.com/JvsOXCg.png" />
+  </picture>
+</a>
 
-This Turborepo starter is maintained by the Turborepo core team.
+<div align="center">
+  <h1>nestjs-trpc-v2</h1>
+  <h3>A maintained fork of nestjs-trpc<br />An opinionated approach to building End-to-end typesafe APIs with tRPC within NestJS.</h3>
+  <a href="https://github.com/YOUR_USERNAME/nestjs-trpc-v2/actions/workflows/ci.yml">
+    <img alt="CI" src="https://github.com/YOUR_USERNAME/nestjs-trpc-v2/actions/workflows/ci.yml/badge.svg" />
+  </a>
+  <a href="https://www.npmjs.com/package/nestjs-trpc-v2">
+    <img alt="npm version" src="https://badge.fury.io/js/nestjs-trpc-v2.svg" />
+  </a>
+  <a href="https://www.npmjs.com/package/nestjs-trpc-v2">
+    <img alt="weekly downloads" src="https://img.shields.io/npm/dm/nestjs-trpc-v2.svg">
+  </a>
+  <a href="https://github.com/YOUR_USERNAME/nestjs-trpc-v2/blob/main/LICENSE">
+    <img alt="MIT License" src="https://img.shields.io/github/license/YOUR_USERNAME/nestjs-trpc-v2" />
+  </a>
+  <br />
+  <figure>
+    <img src="https://i.imgur.com/bttfbmF.gif" alt="Demo" />
+    <figcaption>
+      <p align="center">
+        The client above is <strong>not</strong> importing any code from the server, only its type declarations.
+      </p>
+    </figcaption>
+  </figure>
+</div>
 
-## Using this example
+---
 
-Run the following command:
+> **⚠️ Important Notice**: This is a maintained fork of the original [nestjs-trpc](https://github.com/KevinEdry/nestjs-trpc) by [Kevin Edry](https://twitter.com/KevinEdry). The original repository is no longer actively maintained. This fork continues development with modern tooling, updated dependencies, and ongoing support.
 
-```sh
-npx create-turbo@latest
+---
+
+## Introduction
+
+**nestjs-trpc-v2** is a library designed to integrate the capabilities of tRPC into the NestJS framework. It provides native support for decorators and implements an opinionated approach that aligns with NestJS conventions.
+
+This v2 fork includes:
+- 🔄 Active maintenance and updates
+- 📦 Turborepo monorepo structure
+- 🚀 Modern build tooling
+- 🔒 Updated dependencies with security patches
+- ✅ Automated CI/CD workflows
+
+## Features
+
+- ✅&nbsp; Supports most tRPC features out of the box with more to come.
+- 🧙‍&nbsp; Full static typesafety & autocompletion on the client, for inputs, outputs, and errors.
+- 🙀&nbsp; Implements the Nestjs opinionated approach to how tRPC works.
+- ⚡️&nbsp; Same client-side DX - We generate the AppRouter on the fly.
+- 🔋&nbsp; Examples are available in the ./examples folder.
+- 📦&nbsp; Out of the box support for **Dependency Injection** within the routes and procedures.
+- 👀&nbsp; Native support for `express`, `fastify`, and `zod` with more drivers to come!
+
+## Quickstart
+
+### Installation
+
+To install **nestjs-trpc-v2** with your preferred package manager, you can use any of the following commands:
+
+```shell
+# npm
+npm install nestjs-trpc-v2 zod @trpc/server
+
+# pnpm
+pnpm add nestjs-trpc-v2 zod @trpc/server
+
+# yarn
+yarn add nestjs-trpc-v2 zod @trpc/server
 ```
 
-## What's inside?
+### Peer Dependencies
 
-This Turborepo includes the following packages/apps:
+Make sure you have the following peer dependencies installed:
 
-### Apps and Packages
+- `@nestjs/common` (^9.3.8 || ^10.0.0)
+- `@nestjs/core` (^9.3.8 || ^10.0.0)
+- `@trpc/server` (^10.0.0)
+- `reflect-metadata` (^0.1.13 || ^0.2.0)
+- `rxjs` (7.8.1)
+- `zod` (^3.14.0)
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+## How to use
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+Here's a brief example demonstrating how to use the decorators available in **nestjs-trpc-v2**:
 
-### Utilities
+```typescript
+// users.router.ts
+import { Inject } from '@nestjs/common';
+import { Router, Query, UseMiddlewares } from 'nestjs-trpc-v2';
+import { UserService } from './user.service';
+import { ProtectedMiddleware } from './protected.middleware';
+import { TRPCError } from '@trpc/server';
+import { z } from 'zod';
 
-This Turborepo has some additional tools already setup for you:
+const userSchema = z.object({
+  name: z.string(),
+  password: z.string()
+})
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
+@Router()
+class UserRouter {
+  constructor(
+    @Inject(UserService) private readonly userService: UserService
+  ) {}
 
-### Build
-
-To build all apps and packages, run the following command:
-
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build
-yarn dlx turbo build
-pnpm exec turbo build
-```
-
-You can build a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
-
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build --filter=docs
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build --filter=docs
-yarn exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
-```
-
-### Develop
-
-To develop all apps and packages, run the following command:
-
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev
-yarn exec turbo dev
-pnpm exec turbo dev
+  @UseMiddlewares(ProtectedMiddleware)
+  @Query({ output: z.array(userSchema) })
+  async getUsers() {
+    try {
+      return this.userService.getUsers();
+    } catch (error: unknown) {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "An error has occured when trying to get users.",
+        cause: error
+      })
+    }
+  }
+}
 ```
 
-You can develop a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
+**👉 For more examples and detailed documentation, see [NestJS-tRPC.io](https://nestjs-trpc.io/docs). 👈**
 
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev --filter=web
+> **Note**: The original documentation site is maintained by Kevin Edry. This fork maintains API compatibility with the original library.
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev --filter=web
-yarn exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
-```
+## Development
 
-### Remote Caching
+This project uses Turborepo for managing the monorepo.
 
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
+### Prerequisites
 
-Turborepo can use a technique known as [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
+- Node.js >= 18
+- pnpm >= 9.0.0
 
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
+### Setup
 
-```
-cd my-turborepo
+```bash
+# Clone the repository
+git clone https://github.com/YOUR_USERNAME/nestjs-trpc-v2.git
+cd nestjs-trpc-v2
 
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo login
+# Install dependencies
+pnpm install
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo login
-yarn exec turbo login
-pnpm exec turbo login
+# Build all packages
+pnpm build
+
+# Run tests
+pnpm test
 ```
 
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
+### Project Structure
 
 ```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo link
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo link
-yarn exec turbo link
-pnpm exec turbo link
+nestjs-trpc-v2/
+├── packages/
+│   └── nestjs-trpc/           # Main package
+│       ├── lib/               # Source code
+│       │   ├── decorators/    # Decorators
+│       │   ├── factories/     # Factories
+│       │   ├── generators/    # Code generators
+│       │   ├── interfaces/    # TypeScript interfaces
+│       │   └── ...
+│       └── dist/              # Build output
+├── .github/                   # GitHub workflows & templates
+├── turbo.json                 # Turborepo configuration
+└── package.json               # Root package.json
 ```
 
-## Useful Links
+### Building
 
-Learn more about the power of Turborepo:
+```bash
+# Build all packages
+pnpm build
 
-- [Tasks](https://turborepo.com/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.com/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.com/docs/reference/configuration)
-- [CLI Usage](https://turborepo.com/docs/reference/command-line-reference)
+# Build specific package
+pnpm --filter nestjs-trpc-v2 build
+```
+
+### Contributing
+
+Contributions are welcome! Please read our [Contributing Guide](CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
+
+## Publishing
+
+This package is automatically published to npm when a new release is created or when a version tag is pushed. See the [Publishing Guide](CONTRIBUTING.md#publishing) for more details.
+
+## Migration from nestjs-trpc
+
+Migrating from the original `nestjs-trpc` is straightforward:
+
+1. Update your package.json:
+```diff
+- "nestjs-trpc": "^x.x.x"
++ "nestjs-trpc-v2": "^0.0.1"
+```
+
+2. Update your imports:
+```diff
+- import { Router, Query } from 'nestjs-trpc';
++ import { Router, Query } from 'nestjs-trpc-v2';
+```
+
+3. Run `pnpm install` (or your package manager)
+
+The API remains compatible with the original library, so no code changes should be necessary beyond updating the package name.
+
+## Credits & License
+
+### Original Library
+
+**nestjs-trpc-v2** is a maintained fork of [nestjs-trpc](https://github.com/KevinEdry/nestjs-trpc), originally developed by [Kevin Edry](https://twitter.com/KevinEdry). The original library took huge inspiration from both NestJS and tRPC inner workings.
+
+#### Original Contributors
+
+<a href="https://github.com/KevinEdry/nestjs-trpc/graphs/contributors">
+  <p align="center">
+    <img width="720" src="https://contrib.rocks/image?repo=kevinedry/nestjs-trpc" alt="Contributors to the original nestjs-trpc repository" />
+  </p>
+</a>
+
+### This Fork
+
+This fork is maintained by [Michael Guay](https://michaelguay.dev) and the community.
+
+### License
+
+MIT - See [LICENSE](LICENSE) file for details.
+
+---
+
+**⭐ If this library helps you, please consider giving it a star!**
+
+For questions or support:
+- 📖 [Documentation](https://nestjs-trpc.io/docs) (original docs, still applicable)
+- 🐛 [Report Issues](https://github.com/YOUR_USERNAME/nestjs-trpc-v2/issues)
+- 💬 [Discussions](https://github.com/YOUR_USERNAME/nestjs-trpc-v2/discussions)
+- 🔗 [Original Repository](https://github.com/KevinEdry/nestjs-trpc)
