@@ -40,7 +40,8 @@ export class StaticGenerator {
     schemaImportNames: Array<string>,
     importsMap: Map<string, SourceFileImportsMap>,
   ): void {
-    const importDeclarations: ImportDeclarationStructure[] = [];
+    // Group imports by module specifier to deduplicate and organize
+    const importsByModule = new Map<string, Set<string>>();
 
     for (const schemaImportName of schemaImportNames) {
       for (const [importMapKey, importMapMetadata] of importsMap.entries()) {
@@ -48,22 +49,59 @@ export class StaticGenerator {
           continue;
         }
 
-        const relativePath = path.relative(
-          path.dirname(sourceFile.getFilePath()),
-          importMapMetadata.sourceFile.getFilePath().replace(/\.ts$/, ''),
-        );
+        let moduleSpecifier: string;
 
-        importDeclarations.push({
-          kind: StructureKind.ImportDeclaration,
-          moduleSpecifier: relativePath.startsWith('.')
+        // Check if this is an external/workspace import
+        if (importMapMetadata.moduleSpecifier != null) {
+          // Use the preserved module specifier for external imports
+          moduleSpecifier = importMapMetadata.moduleSpecifier;
+        } else if (importMapMetadata.sourceFile != null) {
+          // Calculate relative path for local imports
+          const relativePath = path.relative(
+            path.dirname(sourceFile.getFilePath()),
+            importMapMetadata.sourceFile.getFilePath().replace(/\.ts$/, ''),
+          );
+          moduleSpecifier = relativePath.startsWith('.')
             ? relativePath
-            : `./${relativePath}`,
-          namedImports: [schemaImportName],
-        });
+            : `./${relativePath}`;
+        } else {
+          continue;
+        }
+
+        // Add to the set for this module specifier
+        if (!importsByModule.has(moduleSpecifier)) {
+          importsByModule.set(moduleSpecifier, new Set());
+        }
+        importsByModule.get(moduleSpecifier)!.add(schemaImportName);
       }
     }
 
-    sourceFile.addImportDeclarations(importDeclarations);
+    // Add or merge import declarations
+    for (const [moduleSpecifier, namedImportsSet] of importsByModule) {
+      const existingImport = sourceFile
+        .getImportDeclarations()
+        .find((imp) => imp.getModuleSpecifierValue() === moduleSpecifier);
+
+      if (existingImport) {
+        // Merge with existing import
+        const existingNamedImports = existingImport
+          .getNamedImports()
+          .map((ni) => ni.getName());
+        const newImports = Array.from(namedImportsSet).filter(
+          (name) => !existingNamedImports.includes(name),
+        );
+        if (newImports.length > 0) {
+          existingImport.addNamedImports(newImports);
+        }
+      } else {
+        // Create new import declaration
+        sourceFile.addImportDeclaration({
+          kind: StructureKind.ImportDeclaration,
+          moduleSpecifier,
+          namedImports: Array.from(namedImportsSet),
+        });
+      }
+    }
   }
 
   public findCtxOutProperty(type: Type): string | undefined {

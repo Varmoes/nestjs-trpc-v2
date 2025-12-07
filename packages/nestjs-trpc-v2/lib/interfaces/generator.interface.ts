@@ -28,12 +28,14 @@ export interface DecoratorGeneratorMetadata {
 }
 
 export interface SourceFileImportsMap {
-  initializer:
+  initializer?:
     | Expression
     | ClassDeclaration
     | InterfaceDeclaration
     | EnumDeclaration
     | VariableDeclaration
-    | FunctionDeclaration;
-  sourceFile: SourceFile;
+    | FunctionDeclaration
+    | null;
+  sourceFile: SourceFile | null;
+  moduleSpecifier?: string;
 }

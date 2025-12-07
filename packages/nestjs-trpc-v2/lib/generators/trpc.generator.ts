@@ -147,16 +147,19 @@ export class TRPCGenerator implements OnModuleInit {
           throw new Error('Could not find context import declaration.');
         }
 
-        const contextType = await this.contextHandler.getContextInterface(
-          contextImport.sourceFile,
-          context,
-        );
+        // Only process context if it has a resolvable source file (not an external import)
+        if (contextImport.sourceFile != null) {
+          const contextType = await this.contextHandler.getContextInterface(
+            contextImport.sourceFile,
+            context,
+          );
 
-        helperTypesSourceFile.addTypeAlias({
-          isExported: true,
-          name: 'Context',
-          type: contextType ?? '{}',
-        });
+          helperTypesSourceFile.addTypeAlias({
+            isExported: true,
+            name: 'Context',
+            type: contextType ?? '{}',
+          });
+        }
       }
 
       for (const middleware of middlewares) {
