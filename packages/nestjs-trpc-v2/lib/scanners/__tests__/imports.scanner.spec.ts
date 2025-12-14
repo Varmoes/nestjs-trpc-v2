@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { Project, SourceFile } from 'ts-morph';
+import { Project } from 'ts-morph';
 import { ImportsScanner } from '../imports.scanner';
 
 describe('ImportsScanner', () => {
