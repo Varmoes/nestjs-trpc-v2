@@ -160,8 +160,7 @@ export class ImportsScanner {
 
       // Fallback: Convert .js/.d.ts to .ts if possible
       const tsPath = resolvedPath
-        .replace(/\.js$/, '.ts')
-        .replace(/\.d\.ts$/, '.ts');
+        .replace(/(\.d\.ts|\.js)$/, '.ts');
 
       if (fs.existsSync(tsPath)) {
         return tsPath;
