@@ -6,7 +6,6 @@ import { ProcedureFactory } from '../procedure.factory';
 
 describe('TRPCFactory', () => {
   let trpcFactory: TRPCFactory;
-  let routerFactory: RouterFactory;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
