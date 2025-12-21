@@ -29,7 +29,6 @@ describe('TRPCFactory', () => {
     }).compile();
 
     trpcFactory = module.get<TRPCFactory>(TRPCFactory);
-    routerFactory = module.get<RouterFactory>(RouterFactory);
   });
 
   it('should be defined', () => {

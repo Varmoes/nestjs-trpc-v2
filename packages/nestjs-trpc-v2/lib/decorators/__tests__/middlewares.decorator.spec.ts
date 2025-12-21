@@ -18,7 +18,7 @@ describe('UseMiddlewares Decorator', () => {
 
   it('should add metadata to the class', () => {
     @UseMiddlewares(TestMiddleware)
-    class _TestClass {}
+    class TestClass {}
 
     const metadata = Reflect.getMetadata(MIDDLEWARES_KEY, TestClass);
     expect(metadata).toStrictEqual([TestMiddleware]);
@@ -39,7 +39,7 @@ describe('UseMiddlewares Decorator', () => {
 
   it('should throw an error for invalid middleware on class', () => {
     expect(() => {
-      @UseMiddlewares({} as unknown as TRPCMiddleware)
+      @UseMiddlewares({} as any)
       class _TestClass {}
     }).toThrow();
   });
@@ -47,7 +47,7 @@ describe('UseMiddlewares Decorator', () => {
   it('should throw an error for invalid middleware on method', () => {
     expect(() => {
       class _TestClass {
-        @UseMiddlewares({} as unknown as TRPCMiddleware)
+        @UseMiddlewares({} as any)
         testMethod() {}
       }
     }).toThrow();

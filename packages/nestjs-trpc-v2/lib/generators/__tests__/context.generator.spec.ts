@@ -67,10 +67,9 @@ describe('ContextGenerator', () => {
 
       jest.spyOn(project, 'addSourceFileAtPath').mockReturnValue(sourceFile);
 
-      //@ts-expect-error invalid context passed in
       const result = await contextGenerator.getContextInterface(
         sourceFile,
-        InvalidContext,
+        InvalidContext as any,
       );
       expect(result).toBeNull();
     });
