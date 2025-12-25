@@ -1,3 +1,5 @@
+'use client';
+
 import {
   MegaphoneIcon,
   ArrowRight,
@@ -29,7 +31,7 @@ export default function Home() {
   return (
     <div
       className={
-        'mx-auto mt-24 px-6 text-center md:px-8 max-w-[80rem] z-20 gap-12 flex flex-col'
+        'mx-auto mt-12 px-6 text-center md:px-8 max-w-[80rem] z-20 gap-12 flex flex-col'
       }
     >
       <header className={'flex flex-col items-center gap-3'}>
@@ -73,7 +75,7 @@ export default function Home() {
             <button
               type={'button'}
               className={
-                'flex py-4 px-6 gap-2 bg-gray text-[#000] rounded-full items-center group/docs transition-all hover:bg-gray/80'
+                'flex py-4 px-6 gap-2 bg-white text-black rounded-full items-center group/docs transition-all hover:bg-white/80'
               }
             >
               <p>Documentation</p>
@@ -90,7 +92,7 @@ export default function Home() {
       <section className={'relative w-full'}>
         <Preview />
       </section>
-      <section className={'flex flex-col justify-between gap-5 mt-16'}>
+      <section className={'flex flex-col justify-between gap-5 mt-16 mb-24'}>
         <div>
           <h2 className={'text-4xl font-medium'}>Why use NestJS tRPC v2?</h2>
           <p className={'text-xl text-subtext'}>
