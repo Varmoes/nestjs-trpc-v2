@@ -166,7 +166,7 @@ export class ImportsScanner {
       }
 
       return undefined;
-    } catch (error) {
+    } catch {
       // Module couldn't be resolved, skip it
       return undefined;
     }
