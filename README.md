@@ -151,15 +151,6 @@ pnpm build
 
 # Run development mode
 pnpm dev
-
-# Run tests
-pnpm test
-
-# Lint code
-pnpm lint
-
-# Format code
-pnpm format
 ```
 
 ### Contributing

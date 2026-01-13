@@ -65,6 +65,9 @@ pnpm check-types
 
 # Run tests
 pnpm test
+
+# Run e2e tests
+pnpm test:e2e
 ```
 
 ### Making Changes
@@ -83,6 +86,8 @@ pnpm lint
 pnpm format:check
 pnpm build
 pnpm test
+pnpm test:e2e
+pnpm check-types
 ```
 
 ## Commit Style
