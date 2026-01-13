@@ -18,7 +18,8 @@ NestJS is built around the strong design pattern commonly known as Dependency in
 >This dependency is resolved and passed to your router's constructor (or assigned to the indicated property)
 
 With this adapter, it is possible to use dependency injection with you routers, middlewares or context providers with ease.
-The adapter will automatically resolve the dependency and will inject the instance when invoking the method.<br/>
+The adapter will automatically resolve the dependency and will inject the instance when invoking the method.
+
 To do that we use the `@Inject()` decorator provided by NestJS. You can read more about it in their <Link href={"https://docs.nestjs.com/providers#dependency-injection"} target={"_blank"} className={"underline"}>official documentation</Link>.
 
 ```typescript /Inject/
