@@ -8,7 +8,7 @@ import {
 import { Project, SourceFile } from 'ts-morph';
 import { saveOrOverrideFile } from '../utils/ts-morph.util';
 import { RouterGenerator } from './router.generator';
-import { SchemaImports, TRPCContext } from '../interfaces';
+import { SchemaImports, TRPCContext, TRPCModuleOptions } from '../interfaces';
 import { MiddlewareGenerator } from './middleware.generator';
 import type { Class } from 'type-fest';
 import { ContextGenerator } from './context.generator';
@@ -73,6 +73,7 @@ export class TRPCGenerator implements OnModuleInit {
 
   public async generateSchemaFile(
     schemaImports?: Array<SchemaImports> | undefined,
+    transformer?: TRPCModuleOptions['transformer'],
   ): Promise<void> {
     try {
       const routers = this.routerFactory.getRouters();
@@ -87,7 +88,10 @@ export class TRPCGenerator implements OnModuleInit {
         return { name, path, alias, instance: { ...route }, procedures };
       });
 
-      this.staticGenerator.generateStaticDeclaration(this.appRouterSourceFile);
+      this.staticGenerator.generateStaticDeclaration(
+        this.appRouterSourceFile,
+        transformer,
+      );
 
       if (schemaImports != null && schemaImports.length > 0) {
         const schemaImportNames: Array<string> = schemaImports.map(

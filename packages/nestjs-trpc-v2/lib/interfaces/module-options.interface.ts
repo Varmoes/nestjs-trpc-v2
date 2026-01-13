@@ -19,6 +19,38 @@ export interface SSEOptions {
   };
 }
 
+export type TransformerOptions =
+  /**
+   * Runtime only, no static generation
+   */
+  | {
+      /**
+       * Use a data transformer
+       * @link https://trpc.io/docs/data-transformers
+       */
+      runtime: DataTransformer;
+      importName?: never;
+      importPath?: never;
+    }
+  /**
+   * Runtime + static generation
+   */
+  | {
+      runtime: DataTransformer;
+
+      /**
+       * Name used when importing the transformer in the generated file.
+       * Example: "superjson", "transformer"
+       */
+      importName: string;
+
+      /**
+       * Module path used for static code generation.
+       * Example: "superjson", "./transformer"
+       */
+      importPath: string;
+    };
+
 /**
  * "TRPCModule" options object.
  */
@@ -57,10 +89,10 @@ export interface TRPCModuleOptions {
   errorFormatter?: TRPCErrorFormatter<any, any>;
 
   /**
-   * Use a data transformer
-   * @link https://trpc.io/docs/data-transformers
+   * Transformer configuration for both runtime value and a static code-generation.
+   * @link https://www.nestjs-trpc.io/docs/data-transformers
    */
-  transformer?: DataTransformer;
+  transformer?: TransformerOptions;
 
   /**
    * Server-sent events (SSE) configuration for subscriptions
