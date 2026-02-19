@@ -129,6 +129,138 @@ class UserRouter {
 
 > **Note**: The original documentation site is maintained by Kevin Edry. This fork maintains API compatibility with the original library.
 
+## CLI Code Generation
+
+**nestjs-trpc-v2** includes a CLI tool for generating tRPC schema files without starting your server. This is especially useful for CI/CD pipelines, pre-build type checking, and production environments.
+
+### Why Use the CLI?
+
+- ⚡️ Generate types before building your application
+- 🔒 Validate schemas without starting the server
+- 🚀 Integrate into CI/CD pipelines
+- 📦 Use pre-generated files in production for faster startup
+
+### Basic Usage
+
+#### 1. Create a Configuration File
+
+Create `nestjs-trpc.config.json` in your project root:
+
+```json
+{
+  "rootModule": "./src/app.module.ts",
+  "outputDir": "./generated"
+}
+```
+
+#### 2. Generate Schema Files
+
+```bash
+# Using the config file
+npx nestjs-trpc generate
+
+# Or with CLI arguments
+npx nestjs-trpc generate --root-module ./src/app.module.ts --output-dir ./generated
+```
+
+### Configuration Options
+
+The config file supports the following options:
+
+```json
+{
+  "rootModule": "./src/app.module.ts",
+  "outputDir": "./generated",
+  "schemaFileImports": [{ "name": "CustomSchema" }],
+  "context": {
+    "path": "./src/trpc.context.ts",
+    "className": "TRPCContext"
+  }
+}
+```
+
+### CLI Options
+
+```bash
+nestjs-trpc generate [options]
+
+Options:
+  -c, --config <path>       Path to config file (default: "nestjs-trpc.config.json")
+  -r, --root-module <path>  Path to root NestJS module (e.g., ./src/app.module.ts)
+  -o, --output-dir <path>   Output directory for generated files (e.g., ./generated)
+  -h, --help                Display help for command
+```
+
+### Disable Runtime Generation
+
+When using the CLI in CI/CD or production, you can disable runtime generation:
+
+```typescript
+// app.module.ts
+import { Module } from '@nestjs/common';
+import { TRPCModule } from 'nestjs-trpc-v2';
+
+@Module({
+  imports: [
+    TRPCModule.forRoot({
+      autoSchemaFile: './generated',
+      disableAutoGenerate: process.env.NODE_ENV === 'production', // ✨ Disable in production
+    }),
+  ],
+})
+export class AppModule {}
+```
+
+### CI/CD Integration
+
+Add the CLI to your CI/CD pipeline:
+
+```yaml
+# .github/workflows/build.yml
+name: Build
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+
+      - run: npm install
+      - run: npx nestjs-trpc generate # ✨ Generate before build
+      - run: npm run build
+      - run: npm test
+```
+
+### Development Workflow
+
+**Recommended approach:**
+
+- **Development**: Use runtime generation (hot reload)
+
+  ```typescript
+  TRPCModule.forRoot({
+    autoSchemaFile: './generated',
+    disableAutoGenerate: false, // or omit
+  });
+  ```
+
+- **CI/CD**: Use CLI generation before build
+
+  ```bash
+  npx nestjs-trpc generate && npm run build
+  ```
+
+- **Production**: Use pre-generated files
+  ```typescript
+  TRPCModule.forRoot({
+    autoSchemaFile: './generated',
+    disableAutoGenerate: true,
+  });
+  ```
+
 ## Development
 
 This project uses Turborepo for managing the monorepo.

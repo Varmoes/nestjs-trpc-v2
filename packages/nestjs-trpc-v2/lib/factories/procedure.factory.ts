@@ -125,8 +125,9 @@ export class ProcedureFactory {
         strict: false,
       });
       if (typeof customProcedureInstance.use === 'function') {
-        //@ts-expect-error this is expected since the type is correct.
-        procedure = procedure.use((opts) => customProcedureInstance.use(opts));
+        procedure = procedure.use((opts: any) =>
+          customProcedureInstance.use(opts),
+        );
       }
     }
     return procedure;

@@ -1,0 +1,424 @@
+---
+title: "CLI Code Generation"
+---
+
+import Link from 'next/link';
+import Table from '@/components/Table';
+
+# CLI Code Generation
+
+**nestjs-trpc-v2** includes a powerful CLI tool for generating tRPC schema files without starting your server. This is especially useful for CI/CD pipelines, pre-build type checking, and production environments.
+
+## Why Use the CLI?
+
+<Cards>
+  <Card icon={<span>⚡️</span>} title="Pre-build Generation">
+    Generate types before building your application for faster build times and better type checking.
+  </Card>
+  <Card icon={<span>🔒</span>} title="Schema Validation">
+    Validate schemas without starting the server, catching errors earlier in the development cycle.
+  </Card>
+  <Card icon={<span>🚀</span>} title="CI/CD Integration">
+    Seamlessly integrate into your CI/CD pipelines for automated type generation and validation.
+  </Card>
+  <Card icon={<span>📦</span>} title="Production Ready">
+    Use pre-generated files in production for faster server startup times.
+  </Card>
+</Cards>
+
+## Installation
+
+The CLI is included with **nestjs-trpc-v2** - no additional installation required!
+
+```bash
+npm install nestjs-trpc-v2
+```
+
+## Quick Start
+
+<Steps>
+  <Step>
+  ### Create a Configuration File
+
+  Create `nestjs-trpc.config.json` in your project root:
+
+  ```json
+  {
+    "rootModule": "./src/app.module.ts",
+    "outputDir": "./generated"
+  }
+  ```
+  </Step>
+
+  <Step>
+  ### Generate Schema Files
+
+  Run the CLI command to generate your tRPC schema:
+
+  <Tabs items={['npm', 'pnpm', 'yarn', 'bun']}>
+    <Tab value="npm">
+      ```bash
+      npx nestjs-trpc generate
+      ```
+    </Tab>
+    <Tab value="pnpm">
+      ```bash
+      pnpm nestjs-trpc generate
+      ```
+    </Tab>
+    <Tab value="yarn">
+      ```bash
+      yarn nestjs-trpc generate
+      ```
+    </Tab>
+    <Tab value="bun">
+      ```bash
+      bunx nestjs-trpc generate
+      ```
+    </Tab>
+  </Tabs>
+  </Step>
+
+  <Step>
+  ### Use Generated Files
+
+  The CLI generates two files:
+  - `generated/server.ts` - Your complete AppRouter with all procedures
+  - `generated/types/index.ts` - Helper types for middleware and context
+  </Step>
+</Steps>
+
+## Configuration Options
+
+The config file supports the following options:
+
+```json
+{
+  "rootModule": "./src/app.module.ts",
+  "outputDir": "./generated",
+  "schemaFileImports": [
+    { "name": "CustomSchema" }
+  ],
+  "context": {
+    "path": "./src/trpc.context.ts",
+    "className": "TRPCContext"
+  }
+}
+```
+
+### Configuration Reference
+
+<Table>
+  <thead>
+    <tr>
+      <th>Option</th>
+      <th>Type</th>
+      <th>Required</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>`rootModule`</td>
+      <td>`string`</td>
+      <td>✅</td>
+      <td>Path to your root NestJS module (typically `app.module.ts`)</td>
+    </tr>
+    <tr>
+      <td>`outputDir`</td>
+      <td>`string`</td>
+      <td>❌</td>
+      <td>Output directory for generated files (default: `./generated`)</td>
+    </tr>
+    <tr>
+      <td>`schemaFileImports`</td>
+      <td>`Array`</td>
+      <td>❌</td>
+      <td>Additional imports for manual inclusion (for exceptional cases)</td>
+    </tr>
+    <tr>
+      <td>`context`</td>
+      <td>`object`</td>
+      <td>❌</td>
+      <td>Configuration for tRPC context class generation</td>
+    </tr>
+  </tbody>
+</Table>
+
+## CLI Command Reference
+
+```bash
+nestjs-trpc generate [options]
+```
+
+### Options
+
+<Table>
+  <thead>
+    <tr>
+      <th>Option</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>`-c, --config <path>`</td>
+      <td>Path to config file</td>
+      <td>`nestjs-trpc.config.json`</td>
+    </tr>
+    <tr>
+      <td>`-r, --root-module <path>`</td>
+      <td>Path to root NestJS module</td>
+      <td>From config file</td>
+    </tr>
+    <tr>
+      <td>`-o, --output-dir <path>`</td>
+      <td>Output directory for generated files</td>
+      <td>From config file or `./generated`</td>
+    </tr>
+    <tr>
+      <td>`-h, --help`</td>
+      <td>Display help for command</td>
+      <td>-</td>
+    </tr>
+  </tbody>
+</Table>
+
+### Using CLI Arguments
+
+You can override config file values with CLI arguments:
+
+```bash
+npx nestjs-trpc generate --root-module ./src/app.module.ts --output-dir ./dist/generated
+```
+
+## Disable Runtime Generation
+
+When using the CLI in CI/CD or production, you can disable runtime generation to improve startup times:
+
+```typescript title="app.module.ts"
+import { Module } from '@nestjs/common';
+import { TRPCModule } from 'nestjs-trpc-v2';
+
+@Module({
+  imports: [
+    TRPCModule.forRoot({
+      autoSchemaFile: './generated',
+      disableAutoGenerate: process.env.NODE_ENV === 'production', // ✨ Disable in production
+    }),
+  ],
+})
+export class AppModule {}
+```
+
+<Callout type="info">
+  The `disableAutoGenerate` flag prevents schema generation during module initialization. When enabled, the server will use pre-generated files created by the CLI.
+</Callout>
+
+## CI/CD Integration
+
+### GitHub Actions
+
+Add the CLI to your GitHub Actions workflow:
+
+```yaml title=".github/workflows/build.yml"
+name: Build
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - run: npm ci
+      - run: npx nestjs-trpc generate  # ✨ Generate before build
+      - run: npm run build
+      - run: npm test
+```
+
+### GitLab CI
+
+```yaml title=".gitlab-ci.yml"
+build:
+  stage: build
+  script:
+    - npm ci
+    - npx nestjs-trpc generate
+    - npm run build
+    - npm test
+```
+
+### Docker
+
+Include generation in your Dockerfile:
+
+```dockerfile title="Dockerfile"
+FROM node:18-alpine AS builder
+
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci
+
+COPY . .
+RUN npx nestjs-trpc generate  # ✨ Generate during build
+RUN npm run build
+
+FROM node:18-alpine
+WORKDIR /app
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/generated ./generated
+COPY --from=builder /app/node_modules ./node_modules
+CMD ["node", "dist/main"]
+```
+
+## Development Workflow
+
+<Callout type="tip">
+  We recommend different approaches for different environments to optimize your developer experience.
+</Callout>
+
+### Local Development
+
+Use runtime generation for hot reload:
+
+```typescript
+TRPCModule.forRoot({
+  autoSchemaFile: './generated',
+  disableAutoGenerate: false, // or omit
+})
+```
+
+**Benefits:**
+- ✅ Automatic regeneration on code changes
+- ✅ Instant feedback during development
+- ✅ No manual CLI commands needed
+
+### CI/CD Pipeline
+
+Use CLI generation before build:
+
+```bash
+npx nestjs-trpc generate && npm run build
+```
+
+**Benefits:**
+- ✅ Validate schemas before deployment
+- ✅ Catch type errors in CI
+- ✅ Consistent build artifacts
+
+### Production
+
+Use pre-generated files with runtime generation disabled:
+
+```typescript
+TRPCModule.forRoot({
+  autoSchemaFile: './generated',
+  disableAutoGenerate: true,
+})
+```
+
+**Benefits:**
+- ✅ Faster server startup
+- ✅ No runtime overhead
+- ✅ Predictable schema files
+
+## Troubleshooting
+
+### Module Not Found
+
+If you get a "module not found" error:
+
+```bash
+✗ Failed to generate tRPC schema files
+Root module file not found at ./src/app.module.ts
+```
+
+**Solution:** Ensure the `rootModule` path in your config is correct relative to your project root:
+
+```json
+{
+  "rootModule": "./src/app.module.ts"  // ✅ Correct
+  // "rootModule": "src/app.module.ts"  // ❌ Missing ./
+}
+```
+
+### Config Parse Error
+
+If you get a JSON parse error:
+
+```bash
+✗ Failed to parse config file
+```
+
+**Solution:** Validate your JSON syntax. Common issues:
+- Missing commas between properties
+- Trailing commas (not allowed in JSON)
+- Unquoted keys or values
+
+### Generation Fails
+
+If generation fails with an unexpected error:
+
+1. **Check your NestJS module imports** - Ensure all modules are properly imported
+2. **Verify decorator usage** - Make sure `@Router()`, `@Query()`, etc. are correctly applied
+3. **Run with verbose output** - Check the full error message for details
+
+## Examples
+
+### Basic Example
+
+```json title="nestjs-trpc.config.json"
+{
+  "rootModule": "./src/app.module.ts",
+  "outputDir": "./generated"
+}
+```
+
+### With Custom Context
+
+```json title="nestjs-trpc.config.json"
+{
+  "rootModule": "./src/app.module.ts",
+  "outputDir": "./generated",
+  "context": {
+    "path": "./src/trpc/trpc.context.ts",
+    "className": "TRPCContext"
+  }
+}
+```
+
+### With Schema Imports
+
+```json title="nestjs-trpc.config.json"
+{
+  "rootModule": "./src/app.module.ts",
+  "outputDir": "./generated",
+  "schemaFileImports": [
+    { "name": "UserSchema" },
+    { "name": "PostSchema" }
+  ]
+}
+```
+
+## Next Steps
+
+<Cards>
+  <Card title="Routers" href="/docs/routers">
+    Learn how to create routers that work with the CLI
+  </Card>
+  <Card title="Context" href="/docs/context">
+    Understand how context generation works
+  </Card>
+  <Card title="Middlewares" href="/docs/middlewares">
+    Add middleware with proper type generation
+  </Card>
+  <Card title="Integrations" href="/docs/integrations">
+    Integrate with your existing setup
+  </Card>
+</Cards>

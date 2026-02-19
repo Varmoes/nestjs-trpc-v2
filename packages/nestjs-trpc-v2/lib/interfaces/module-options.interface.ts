@@ -18,6 +18,15 @@ export interface TRPCModuleOptions {
   autoSchemaFile?: string;
 
   /**
+   * Disable automatic schema generation at module initialization.
+   * When set to true, schema files will not be generated when the server starts.
+   * Use the CLI command `nestjs-trpc generate` to generate schema files manually.
+   * Useful for CI/CD pipelines and production environments where you want to use pre-generated files.
+   * @default false
+   */
+  disableAutoGenerate?: boolean;
+
+  /**
    * Specifies additional imports for the schema file. This array can include functions, objects, or Zod schemas.
    * While `nestjs-trpc` typically handles imports automatically, this option allows manual inclusion of imports for exceptional cases.
    * Use this property only when automatic import resolution is insufficient.
