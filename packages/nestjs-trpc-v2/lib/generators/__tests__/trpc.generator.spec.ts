@@ -41,6 +41,17 @@ describe('TRPCGenerator', () => {
   let project: Project;
   let sourceFile: SourceFile;
 
+  const mockTRPCOptions = {
+    transformer: {
+      runtime: {
+        serialize: jest.fn(),
+        deserialize: jest.fn(),
+      },
+      importName: 'transformer',
+      importPath: './transformer',
+    },
+  };
+
   beforeEach(async () => {
     project = new Project();
     sourceFile = project.createSourceFile('test.ts', '', { overwrite: true });
@@ -191,6 +202,49 @@ describe('TRPCGenerator', () => {
         'AppRouter has been updated successfully at "./test.ts".',
         'TRPC Generator',
       );
+    });
+
+    it('should generate schema file with transformer options', async () => {
+      const mockRouters = [
+        {
+          name: 'TestRouter',
+          instance: {},
+          alias: 'test',
+          path: 'testPath',
+          middlewares: [],
+        },
+      ];
+
+      routerFactory.getRouters.mockReturnValue(mockRouters);
+      procedureFactory.getProcedures.mockReturnValue([]);
+      routerGenerator.serializeRouters.mockReturnValue([]);
+      routerGenerator.generateRoutersStringFromMetadata.mockReturnValue('');
+
+      (fileUtil.saveOrOverrideFile as jest.Mock).mockResolvedValue(undefined);
+
+      await trpcGenerator.generateSchemaFile(
+        undefined, // schemaImports
+        mockTRPCOptions.transformer, // transformer
+      );
+
+      expect(
+        (trpcGenerator as any).staticGenerator.generateStaticDeclaration,
+      ).toHaveBeenCalledWith(sourceFile, mockTRPCOptions.transformer);
+    });
+
+    it('should work without transformer', async () => {
+      routerFactory.getRouters.mockReturnValue([]);
+      procedureFactory.getProcedures.mockReturnValue([]);
+      routerGenerator.serializeRouters.mockReturnValue([]);
+      routerGenerator.generateRoutersStringFromMetadata.mockReturnValue('');
+
+      (fileUtil.saveOrOverrideFile as jest.Mock).mockResolvedValue(undefined);
+
+      await trpcGenerator.generateSchemaFile(undefined, undefined);
+
+      expect(
+        (trpcGenerator as any).staticGenerator.generateStaticDeclaration,
+      ).toHaveBeenCalledWith(sourceFile, undefined);
     });
 
     it('should handle errors', async () => {

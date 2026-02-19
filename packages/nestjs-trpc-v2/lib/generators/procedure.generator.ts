@@ -27,7 +27,8 @@ export class ProcedureGenerator {
     const decorator = decorators.find(
       (decorator) =>
         decorator.name === ProcedureType.Mutation ||
-        decorator.name === ProcedureType.Query,
+        decorator.name === ProcedureType.Query ||
+        decorator.name === ProcedureType.Subscription,
     );
 
     if (!decorator) {
@@ -143,11 +144,12 @@ export class ProcedureGenerator {
         Node.isPropertyAccessExpression(expression) &&
         !expression.getText().startsWith('z')
       ) {
+        const baseExpression = expression.getExpression();
         const baseSchema = this.flattenZodSchema(
-          expression,
+          baseExpression,
           sourceFile,
           project,
-          expression.getText(),
+          baseExpression.getText(),
           importsMap,
         );
         const propertyName = expression.getName();

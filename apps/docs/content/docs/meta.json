@@ -11,10 +11,12 @@
     "---Usage Guide---",
     "structure",
     "routers",
+    "subscriptions",
     "middlewares",
     "context",
     "dependency-injection",
     "client",
-    "integrations"
+    "integrations",
+    "data-transformers"
   ]
 }

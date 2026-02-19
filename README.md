@@ -80,12 +80,12 @@ yarn add nestjs-trpc-v2 zod @trpc/server
 
 Make sure you have the following peer dependencies installed:
 
-- `@nestjs/common` (^9.3.8 || ^10.0.0)
-- `@nestjs/core` (^9.3.8 || ^10.0.0)
-- `@trpc/server` (^10.0.0)
+- `@nestjs/common` (^9.3.8 || ^10.0.0 || ^11.0.0)
+- `@nestjs/core` (^9.3.8 || ^10.0.0 || ^11.0.0)
+- `@trpc/server` (^10.0.0 || ^11.0.0)
 - `reflect-metadata` (^0.1.13 || ^0.2.0)
-- `rxjs` (7.8.1)
-- `zod` (^3.14.0)
+- `rxjs` (^7.8.1)
+- `zod` (^3.14.0 || ^4.0.0)
 
 ## How to use
 
@@ -125,9 +125,7 @@ class UserRouter {
 }
 ```
 
-**👉 For more examples and detailed documentation, see [NestJS-tRPC.io](https://nestjs-trpc-v2.io/docs). 👈**
-
-> **Note**: The original documentation site is maintained by Kevin Edry. This fork maintains API compatibility with the original library.
+**👉 For more examples and detailed documentation, see [NestJS-tRPC-v2.io](https://nestjs-trpc-v2.io/docs). 👈**
 
 ## Development
 
@@ -136,7 +134,7 @@ This project uses Turborepo for managing the monorepo.
 ### Prerequisites
 
 - Node.js >= 18
-- pnpm >= 9.0.0
+- pnpm >= 10.0.0
 
 ### Setup
 
@@ -151,67 +149,13 @@ pnpm install
 # Build all packages
 pnpm build
 
-# Run tests
-pnpm test
-```
-
-### Project Structure
-
-```
-nestjs-trpc-v2/
-├── packages/
-│   └── nestjs-trpc/           # Main package
-│       ├── lib/               # Source code
-│       │   ├── decorators/    # Decorators
-│       │   ├── factories/     # Factories
-│       │   ├── generators/    # Code generators
-│       │   ├── interfaces/    # TypeScript interfaces
-│       │   └── ...
-│       └── dist/              # Build output
-├── .github/                   # GitHub workflows & templates
-├── turbo.json                 # Turborepo configuration
-└── package.json               # Root package.json
-```
-
-### Building
-
-```bash
-# Build all packages
-pnpm build
-
-# Build specific package
-pnpm --filter nestjs-trpc-v2 build
+# Run development mode
+pnpm dev
 ```
 
 ### Contributing
 
 Contributions are welcome! Please read our [Contributing Guide](CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
-
-## Publishing
-
-This package is automatically published to npm when a new release is created or when a version tag is pushed. See the [Publishing Guide](CONTRIBUTING.md#publishing) for more details.
-
-## Migration from nestjs-trpc
-
-Migrating from the original `nestjs-trpc` is straightforward:
-
-1. Update your package.json:
-
-```diff
-- "nestjs-trpc": "^x.x.x"
-+ "nestjs-trpc-v2": "^0.0.1"
-```
-
-2. Update your imports:
-
-```diff
-- import { Router, Query } from 'nestjs-trpc';
-+ import { Router, Query } from 'nestjs-trpc-v2';
-```
-
-3. Run `pnpm install` (or your package manager)
-
-The API remains compatible with the original library, so no code changes should be necessary beyond updating the package name.
 
 ## Credits & License
 
@@ -241,7 +185,6 @@ MIT - See [LICENSE](LICENSE) file for details.
 
 For questions or support:
 
-- 📖 [Documentation](https://nestjs-trpc-v2.io/docs) (original docs, still applicable)
+- 📖 [Documentation](https://nestjs-trpc-v2.io/docs)
 - 🐛 [Report Issues](https://github.com/mguay22/nestjs-trpc-v2/issues)
-- 💬 [Discussions](https://github.com/mguay22/nestjs-trpc-v2/discussions)
 - 🔗 [Original Repository](https://github.com/KevinEdry/nestjs-trpc)
