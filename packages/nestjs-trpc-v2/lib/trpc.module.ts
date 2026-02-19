@@ -48,7 +48,7 @@ export class TRPCModule implements OnModuleInit {
   static forRoot(options: TRPCModuleOptions = {}): DynamicModule {
     const imports: Array<DynamicModule> = [];
 
-    if (options.autoSchemaFile != null) {
+    if (options.autoSchemaFile != null && !options.disableAutoGenerate) {
       const fileScanner = new FileScanner();
       const callerFilePath = fileScanner.getCallerFilePath();
       imports.push(

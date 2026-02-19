@@ -19,6 +19,12 @@ module.exports = tseslint.config(
     },
   },
   {
-    ignores: ['dist', 'node_modules', 'eslint.config.js'],
+    ignores: [
+      'dist',
+      'node_modules',
+      'eslint.config.js',
+      '**/*.d.ts',
+      'test/e2e/generated',
+    ],
   },
 );

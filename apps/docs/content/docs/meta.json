@@ -3,6 +3,7 @@
   "pages": [
     "---Getting Started---",
     "index",
+    "cli-generation",
     "---Overview---",
     "nestjs",
     "trpc",
